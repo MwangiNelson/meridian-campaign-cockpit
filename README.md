@@ -2,8 +2,7 @@
 
 A decision tool for the Meridian Rewards loyalty programme. It reads 306,534 programme events and tells the campaign manager which offers to stop sending before the next cycle, and what that saves.
 
-**Live site:** https://meridian-campaign-cockpit.vercel.app
-**Latest release:** [v1.0.0](https://github.com/MwangiNelson/meridian-campaign-cockpit/releases/tag/v1.0.0)
+[Live site](https://meridian-campaign-cockpit.vercel.app) · [Latest release, v1.0.0](https://github.com/MwangiNelson/meridian-campaign-cockpit/releases/tag/v1.0.0) · [Workbook download](https://github.com/MwangiNelson/meridian-campaign-cockpit/releases/download/v1.0.0/Meridian_Cockpit_Workbook.xlsx)
 
 ![Overview page in dark mode](docs/overview-dark.png)
 
