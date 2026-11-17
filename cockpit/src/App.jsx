@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { ConfigProvider, Layout, Menu, Select, Slider, Tag, Button, Tooltip, Typography, theme } from 'antd'
 import { DashboardOutlined, TagsOutlined, TeamOutlined, LineChartOutlined, FileTextOutlined, MoonOutlined, SunOutlined,
-         CheckCircleOutlined, WarningOutlined } from '@ant-design/icons'
+         CheckCircleOutlined, WarningOutlined, CompassOutlined } from '@ant-design/icons'
 import { themeFor } from './theme.js'
+import { GuidedTour, tourSteps } from './tour.jsx'
 import { D, waveName } from './lib.js'
 import { Overview, Offers, Members, Value, Notes } from './pages.jsx'
 
@@ -21,7 +22,7 @@ function Filters({ S, set, show }) {
   const field = (key, label, control) => show.includes(key) && <label className="field" key={key}><Typography.Text type="secondary">{label}</Typography.Text>{control}</label>
   if (!show.length) return null
   return (
-    <div className="toolbar">
+    <div className="toolbar" data-tour="filters">
       {field('type', 'Offer type', <Select value={S.type} onChange={v => set({ type: v })} options={[
         { value: 'all', label: 'All types' }, { value: 'bogo', label: 'BOGO' }, { value: 'discount', label: 'Discount' }, { value: 'informational', label: 'Informational' }]} />)}
       {field('wave', 'Send wave', <Select value={S.wave} onChange={v => set({ wave: v })} options={[
@@ -41,6 +42,12 @@ function Shell({ dark, setDark, panel }) {
   const [S, setS] = useState({ type: 'all', wave: 'all', cohort: 'all', scen: 1, thr: 40, move: 50, dest: 'info', bCohort: 'Views, then completes' })
   const set = patch => setS(s => ({ ...s, ...patch }))
   useEffect(() => { const h = () => setPage(pageFromHash()); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
+  // Tour: -1 is closed. A step on another page switches page in the same render, so its target exists.
+  const [step, setStep] = useState(-1), steps = tourSteps(S)
+  const goStep = c => { const p = steps[c].page; if (p !== page) { history.replaceState(null, '', '#' + p); setPage(p) } setStep(c) }
+  const startTour = () => goStep(Math.max(0, steps.findIndex(s => s.page === page)))
+  // ?tour starts at step 1, ?tour=8 jumps to step 8: handy links for the presenter
+  useEffect(() => { const q = new URLSearchParams(location.search).get('tour'); if (q != null) goStep(Math.min(steps.length, Math.max(1, +q || 1)) - 1) }, [])
   const P = PAGES[page], View = P.view
   const failed = D.checks.filter(c => c.status === 'fail').length, passed = D.checks.filter(c => c.status === 'pass').length
   const line = `1px solid ${token.colorBorderSecondary}`
@@ -59,10 +66,11 @@ function Shell({ dark, setDark, panel }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Typography.Text type="secondary" className="hide-sm" style={{ fontSize: 14 }}>Built {D.generated}</Typography.Text>
-            <Tag icon={failed ? <WarningOutlined /> : <CheckCircleOutlined />} color={failed ? 'error' : 'success'} style={{ margin: 0, cursor: 'pointer', fontSize: 14, padding: '3px 10px' }}
+            <Tag data-tour="badge" icon={failed ? <WarningOutlined /> : <CheckCircleOutlined />} color={failed ? 'error' : 'success'} style={{ margin: 0, cursor: 'pointer', fontSize: 14, padding: '3px 10px' }}
                  onClick={() => { location.hash = 'notes' }}>
               {failed ? `${failed} data check${failed > 1 ? 's' : ''} failed` : `${passed} of ${D.checks.length} checks pass`}
             </Tag>
+            <Button icon={<CompassOutlined />} aria-label="Start the guided tour" onClick={startTour}><span className="hide-sm">Tour</span></Button>
             <Tooltip title={dark ? 'Switch to light' : 'Switch to dark'}>
               <Button aria-label="Toggle dark mode" icon={dark ? <SunOutlined /> : <MoonOutlined />} onClick={() => setDark(!dark)} />
             </Tooltip>
@@ -74,6 +82,7 @@ function Shell({ dark, setDark, panel }) {
             <View S={S} set={set} />
           </div>
         </Layout.Content>
+        <GuidedTour steps={steps} current={step} onChange={goStep} onClose={() => setStep(-1)} />
       </Layout>
     </Layout>
   )

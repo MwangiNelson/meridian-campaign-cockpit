@@ -39,6 +39,7 @@ It ranks offers by rewards paid on completions the member never viewed. That fig
 - Aggregates only. No member IDs reach the browser. Cells with a denominator under 50 are suppressed.
 - Demographics appear only in a proxy audit, never as a filter.
 - Explanatory text (definitions, assumptions, limitations, refresh steps) lives in a single Notes tab. Working screens carry numbers and charts.
+- A 15-step guided tour, started from the top bar or with `?tour` in the link, walks all five pages. It doubles as the presenter's script, and a clicker's PageDown and PageUp move it.
 - The first screen leads with the headline numbers.
 
 ## Brand Commitments

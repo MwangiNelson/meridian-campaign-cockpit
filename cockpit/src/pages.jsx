@@ -41,7 +41,7 @@ export function Overview({ S, set }) {
   return (
     <div style={stack}>
       {holder}
-      <div className="kpis">
+      <div className="kpis" data-tour="kpis">
         <Kpi title="Viewed" value={pct(rate(t[1], t[0]))} note={`${num(t[1])} of ${num(t[0])} offers sent`} />
         <Kpi title="Completed" value={pct(rate(rw[2], rw[0]))} note={`${num(rw[2])} of ${num(rw[0])} reward offers`} />
         <Kpi title="Unviewed completions" value={pct(rate(rw[3], rw[2]))} note={`${num(rw[3])} of ${num(rw[2])} completions`} />
@@ -50,7 +50,7 @@ export function Overview({ S, set }) {
       </div>
 
       <div className="split">
-        <Card title="Recommended mix change" style={{ minWidth: 0 }}>
+        <Card title="Recommended mix change" data-tour="mix" style={{ minWidth: 0 }}>
           <div className="toolbar noprint" style={{ marginBottom: 12 }}>
             <label className="field"><Text type="secondary">Move {S.move}% of flagged sends</Text>
               <Slider min={0} max={100} step={10} value={S.move} onChange={v => set({ move: v })} tooltip={{ formatter: v => v + '%' }} /></label>
@@ -68,7 +68,7 @@ export function Overview({ S, set }) {
             ]} />
         </Card>
 
-        <Card title="Reward per cycle" style={{ minWidth: 0 }}>
+        <Card title="Reward per cycle" data-tour="reward" style={{ minWidth: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <Statistic title="Current" value={gbp(P.total)} valueStyle={{ fontSize: 24, color: token.colorTextSecondary }} />
             <Statistic title={`Projected, ${S.move}% moved`} value={gbp(P.total - P.saving)} />
@@ -86,13 +86,13 @@ export function Overview({ S, set }) {
               { key: 3, label: `Net over ${C.cycles} cycles at ${p * 100}%`, children: gbp(netA(p)) },
             ]} />
           <Space className="noprint" style={{ marginTop: 16 }} wrap>
-            <Button type="primary" icon={<CopyOutlined />} onClick={copy}>Copy decision summary</Button>
+            <Button type="primary" icon={<CopyOutlined />} onClick={copy} data-tour="copy">Copy decision summary</Button>
             <Button icon={<PrinterOutlined />} onClick={() => print()}>Print</Button>
           </Space>
         </Card>
       </div>
 
-      <Card title="Targeting rule to test">
+      <Card title="Targeting rule to test" data-tour="rule">
         <Table {...tbl} dataSource={RL.list} columns={[
           { title: 'Rule', render: (_, r) => <Text strong>{r.name}</Text> },
           { title: 'Members', ...right, render: (_, r) => num(r.c.members) },
@@ -113,7 +113,7 @@ export function Offers({ S }) {
   const types = [...agg(r => O[r[0]].type, S)].map(([t, v]) => ({ key: t, t, v, rw: t !== 'informational' }))
   return (
     <div style={stack}>
-      <Card title="Offers" extra={<div className="legend hide-sm"><span><i style={{ background: token.colorPrimary }} />Reward on viewed</span><span><i style={{ background: token.colorWarning }} />Reward on unviewed</span></div>}>
+      <Card title="Offers" data-tour="offers" extra={<div className="legend hide-sm" data-tour="legend"><span><i style={{ background: token.colorPrimary }} />Reward on viewed</span><span><i style={{ background: token.colorWarning }} />Reward on unviewed</span></div>}>
         <Table {...tbl} dataSource={rows} columns={[
           { title: 'Offer', render: (_, r) => <><Text strong>{r.o.label}</Text>{r.uv != null && r.uv >= thr && <Tag color="warning" style={{ marginLeft: 8 }}>Review</Tag>}<Sub>{typeName(r.o.type)} · {r.o.short}</Sub></> },
           { title: 'Sent', ...right, sorter: byNum('n'), render: (_, r) => num(r.n) },
@@ -185,7 +185,7 @@ export function Members({ S }) {
   const series = D.daily[D.cohorts[0]].map((_, d) => D.cohorts.reduce((s, c) => s + (S.cohort === 'all' || S.cohort === c ? D.daily[c][d] : 0), 0))
   return (
     <div style={stack}>
-      <Card title="Member groups">
+      <Card title="Member groups" data-tour="groups">
         <Table {...tbl} dataSource={rows} columns={[
           { title: 'Group', render: (_, r) => <Text strong>{r.c}</Text> },
           { title: 'Members', ...right, render: (_, r) => num(r.m) },
@@ -198,7 +198,7 @@ export function Members({ S }) {
         ]} />
       </Card>
       <Card title={`Daily spend, ${S.cohort === 'all' ? 'all members' : S.cohort.toLowerCase()}`}><SpendChart series={series} S={S} /></Card>
-      <Card title="Proxy audit">
+      <Card title="Proxy audit" data-tour="audit">
         <Table {...tbl} dataSource={D.audit.map(a => ({ ...a, key: a.cohort }))} columns={[
           { title: 'Group', render: (_, a) => <Text strong>{a.cohort}</Text> },
           { title: 'Members', ...right, render: (_, a) => num(a.members) },
@@ -229,7 +229,7 @@ export function Value({ S, set }) {
   )
   return (
     <div style={stack}>
-      <Card title={`Net value over ${C.cycles} cycles`} extra={<div className="legend hide-sm"><span><i style={{ background: token.colorPrimary }} />A, cockpit (selected)</span><span><i style={{ background: token.colorInfo }} />B, segment pilot (deferred)</span></div>}>
+      <Card title={`Net value over ${C.cycles} cycles`} data-tour="net" extra={<div className="legend hide-sm"><span><i style={{ background: token.colorPrimary }} />A, cockpit (selected)</span><span><i style={{ background: token.colorInfo }} />B, segment pilot (deferred)</span></div>}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {A.map((v, i) => bar(`A ${names[i].toLowerCase()}, ${C.A.p[i] * 100}% avoided`, v, token.colorPrimary))}
           {B.map((v, i) => bar(`B ${names[i].toLowerCase()}, ${C.B.u[i] * 100}% uplift`, v, token.colorInfo))}
@@ -244,7 +244,7 @@ export function Value({ S, set }) {
             { title: 'Break-even reward', ...right, render: (_, r) => gbp(costA / (C.cycles * r.p)) },
           ]} />
         </Card>
-        <Card title={<Space size={10}>B. Segment pilot<Tag style={{ margin: 0 }}>Deferred</Tag></Space>} extra={<Select className="noprint" aria-label="Target group" value={S.bCohort} onChange={v => set({ bCohort: v })} style={{ minWidth: 220 }} popupMatchSelectWidth={false}
+        <Card data-tour="optb" title={<Space size={10}>B. Segment pilot<Tag style={{ margin: 0 }}>Deferred</Tag></Space>} extra={<Select className="noprint" aria-label="Target group" value={S.bCohort} onChange={v => set({ bCohort: v })} style={{ minWidth: 220 }} popupMatchSelectWidth={false}
               options={[{ value: 'all', label: 'All members' }, ...D.cohorts.slice(0, 3).map(c => ({ value: c, label: c }))]} />}>
           <Table {...tbl} dataSource={C.B.u.map((u, i) => ({ key: i, u, i }))} columns={[
             { title: 'Case', render: (_, r) => <Text strong style={{ whiteSpace: 'nowrap' }}>{names[r.i]}, {r.u * 100}%</Text> },
@@ -263,7 +263,7 @@ export function Notes() {
   const tag = { pass: ['success', 'Pass'], warn: ['warning', 'Note'], fail: ['error', 'Fail'] }
   return (
     <div style={stack} className="notes">
-      <Card title="Data checks">
+      <Card title="Data checks" data-tour="checks">
         <Table {...tbl} dataSource={D.checks.map(c => ({ ...c, key: c.name }))} columns={[
           { title: 'Check', render: (_, c) => <Text strong>{c.name}</Text> },
           { title: 'Result', render: (_, c) => <Tag color={tag[c.status][0]}>{tag[c.status][1]}</Tag> },
@@ -284,7 +284,7 @@ export function Notes() {
           <li><b>n&lt;50.</b> Fewer than {MIN_N} in the denominator, so the figure is withheld.</li>
         </ul></Card>
         <div style={stack}>
-          <Card title="What the data can and cannot say"><ul>
+          <Card title="What the data can and cannot say" data-tour="limits"><ul>
             <li><b>Observed.</b> {num(D.totals.buyers)} of {num(D.rows.members)} members bought, spending {gbp(D.totals.spend)}. Completions paid {gbp(R)}.</li>
             <li><b>Inferred.</b> An unviewed completion is a reward the member did not need. The member may have seen the offer somewhere the view event does not record.</li>
             <li><b>Inferred.</b> Heavy buyers complete offers by buying. Completion follows spend at least as much as it drives it.</li>

@@ -1,4 +1,5 @@
 body { margin: 0; }
+html { scrollbar-gutter: stable; } /* no layout jump when the tour locks scrolling */
 .num, .ant-statistic-content, .ant-table-cell { font-variant-numeric: tabular-nums; }
 /* antd's break-word (cells and Typography) lets "£26,935" split mid-number once tables size to their container */
 .ant-table-wrapper .ant-table .ant-table-cell, .ant-table-wrapper .ant-table .ant-table-cell .ant-typography { overflow-wrap: normal; word-break: normal; }

@@ -18,6 +18,7 @@ At default settings the cockpit flags 3 of the 8 reward offers, because 40% or m
 - Rates per offer and per offer type, behaviour groups with daily spend, and a proxy audit that checks every targeting rule against gender.
 - Net value over four cycles for Option A, which is selected, and Option B, which is deferred.
 - Data checks, definitions and limits on one Notes page.
+- A 15-step guided tour across all five pages. Its numbers follow the current filters, and it doubles as a presenter's script.
 - Dark and light themes, a phone layout and print styles.
 - An Excel workbook with a data dictionary, metrics, checks, an editable prioritisation matrix and scenario inputs.
 
@@ -59,6 +60,7 @@ The app in `cockpit/` uses React 18 and Ant Design 5, bundled by Vite 5.
 | `src/lib.js` | Every calculation: filtering and summing the cube, the mix plan, the targeting rule, the decision summary. Ends with reconciliation asserts |
 | `src/pages.jsx` | The five pages: Overview, Offers, Members, Value, Notes |
 | `src/App.jsx` | Shell, sidebar, hash routing, filter state, theme choice |
+| `src/tour.jsx` | The guided tour: step text built from live numbers, keyboard and clicker control |
 | `src/theme.js` | Ant Design tokens for the dark and light themes |
 | `src/styles.css` | Layout grids, net value bars, print rules |
 
@@ -69,6 +71,7 @@ Design choices worth knowing:
 - Hash routes such as `#overview` and `#offers` need no server rewrites, so any static host works.
 - A rate whose denominator is under 50 shows `n<50` instead of a number.
 - `?theme=dark` or `?theme=light` in the link overrides the saved and system theme. This helps on a projector.
+- `?tour` in the link opens the guided tour at step 1, and `?tour=8` opens it at step 8. Arrow keys, PageDown and PageUp move between steps, so a presentation clicker works. Escape closes it.
 
 The shape of `data.js`:
 

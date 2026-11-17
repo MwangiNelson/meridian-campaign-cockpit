@@ -32,6 +32,6 @@ Inter Variable, self-hosted through `@fontsource-variable/inter`. Base size is 1
 
 - Every rate shows its denominator beneath it ("of 4,354").
 - Colour never carries meaning alone. A flagged offer has a "Review" tag, a loss has a "Loss" tag, and unviewed reward is written in pounds beside its amber bar segment.
-- Explanatory prose lives in the Notes page. Working pages carry labels and numbers.
+- Explanatory prose lives in the Notes page. Working pages carry labels and numbers. The one exception is the opt-in guided tour (`src/tour.jsx`), which lays a popover over each element it explains.
 - Filters appear only on pages they affect.
 - Radius is 6px. Panels have a 1px border and no shadow.
