@@ -46,8 +46,13 @@ function Shell({ dark, setDark, panel }) {
   const [step, setStep] = useState(-1), steps = tourSteps(S)
   const goStep = c => { const p = steps[c].page; if (p !== page) { history.replaceState(null, '', '#' + p); setPage(p) } setStep(c) }
   const startTour = () => goStep(Math.max(0, steps.findIndex(s => s.page === page)))
-  // ?tour starts at step 1, ?tour=8 jumps to step 8: handy links for the presenter
-  useEffect(() => { const q = new URLSearchParams(location.search).get('tour'); if (q != null) goStep(Math.min(steps.length, Math.max(1, +q || 1)) - 1) }, [])
+  // The tour opens by default until this browser has closed it once. ?tour always opens it, ?tour=8 at step 8.
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('tour')
+    let seen = false; try { seen = localStorage.getItem('tourSeen') === '1' } catch {}
+    if (q != null || !seen) goStep(Math.min(steps.length, Math.max(1, +q || 1)) - 1)
+  }, [])
+  const endTour = () => { setStep(-1); try { localStorage.setItem('tourSeen', '1') } catch {} }
   const P = PAGES[page], View = P.view
   const failed = D.checks.filter(c => c.status === 'fail').length, passed = D.checks.filter(c => c.status === 'pass').length
   const line = `1px solid ${token.colorBorderSecondary}`
@@ -82,7 +87,7 @@ function Shell({ dark, setDark, panel }) {
             <View S={S} set={set} />
           </div>
         </Layout.Content>
-        <GuidedTour steps={steps} current={step} onChange={goStep} onClose={() => setStep(-1)} />
+        <GuidedTour steps={steps} current={step} onChange={goStep} onClose={endTour} />
       </Layout>
     </Layout>
   )

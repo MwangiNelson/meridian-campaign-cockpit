@@ -71,7 +71,7 @@ Design choices worth knowing:
 - Hash routes such as `#overview` and `#offers` need no server rewrites, so any static host works.
 - A rate whose denominator is under 50 shows `n<50` instead of a number.
 - `?theme=dark` or `?theme=light` in the link overrides the saved and system theme. This helps on a projector.
-- `?tour` in the link opens the guided tour at step 1, and `?tour=8` opens it at step 8. Arrow keys, PageDown and PageUp move between steps, so a presentation clicker works. Escape closes it.
+- The guided tour opens on a viewer's first visit. Once they close or finish it, it stays closed in that browser. `?tour` in the link always opens it at step 1, and `?tour=8` at step 8. Arrow keys, PageDown and PageUp move between steps, so a presentation clicker works. Escape closes it.
 
 The shape of `data.js`:
 
